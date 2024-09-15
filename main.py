@@ -1,3 +1,5 @@
+import ssl
+
 from aiohttp import web
 
 routes = web.RouteTableDef()
@@ -31,6 +33,11 @@ async def success_page(rq: web.Request):
     return web.Response(text='success')
 
 
+def get_ssl_context():
+    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    ssl_context.load_cert_chain('cert.crt', 'key.pem')
+
+
 app = web.Application()
 app.add_routes(routes)
-web.run_app(app, host='localhost', port=8080)
+web.run_app(app, host='localhost', port=8080, ssl_context=get_ssl_context())
